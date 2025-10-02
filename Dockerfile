@@ -1,22 +1,24 @@
-# Use a lightweight Node.js base image
+# Use official Node.js LTS image
 FROM node:20-alpine
 
-# Create app directory
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV=production
+# Install pnpm globally
+RUN npm install -g pnpm
 
-# Install only production dependencies
-COPY package*.json ./
-RUN npm ci --omit=dev
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
-# Copy application source
+# Install dependencies
+RUN pnpm install --prod
+
+# Copy the rest of the source code
 COPY . .
 
-# Set and expose the port (adjust if your app uses a different one)
-ENV PORT=3000
-EXPOSE 3000
+# Set env and expose port
+ENV NODE_ENV=production
+ENV PORT=5000
+EXPOSE 5000
 
-# Start the server (adjust entry point if different: app.js / index.js)
+# Start the server
 CMD ["node", "server.js"]
