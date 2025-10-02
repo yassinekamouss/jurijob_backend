@@ -1,15 +1,20 @@
 const express = require('express');
-const app = express();
-// get the port from environment variable or use 3000 as default
+const dotenv = require('dotenv');
+dotenv.config();
+
 const PORT = process.env.PORT || 3000;
 
+const app = express();
 app.get('/', (req, res) => {
-    res.json(
-        {
-            message: "Hello From Jurijob!",
-            status: 200
-        }
-    )
+    res.json({
+        message: `
+        =====================
+        = Hello From Jurijob! =
+        =====================
+        `,
+        status: 200
+    });
+
 });
 
 
