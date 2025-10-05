@@ -42,6 +42,4 @@ Thumbs.db
 test-results/
 jest-html-reporters-*.html
 
-
-# .vscode
-.vscode/mcp.json
+test.http
