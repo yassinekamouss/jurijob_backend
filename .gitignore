@@ -42,5 +42,4 @@ Thumbs.db
 test-results/
 jest-html-reporters-*.html
 
-
 test.http
