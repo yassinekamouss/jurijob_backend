@@ -16,7 +16,13 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
-
+// Middlewares
+app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+    credentials: true, //  CRUCIAL pour les cookies
+  })
+);
 app.use(cookieParser());
 app.use(express.json()); // pour lire JSON dans req.body
 
