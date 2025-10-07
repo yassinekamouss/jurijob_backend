@@ -1,27 +1,22 @@
 pipeline {
-    agent any  // Utilise directement le container Jenkins avec Node.js installé
-
-    environment {
-        APP_PORT = 5000  // Port de l'application Express
-    }
-
+    // ...
     stages {
-        // --- Étape 1: Récupération du code ---
+        // --- This entire stage should be removed ---
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/yassinekamouss/jurijob_backend.git', branch: 'main'
             }
         }
-
-        // --- Étape 2: Installation des dépendances ---
+        // --- End of stage to be removed ---
+        
         stage('Install Dependencies') {
             steps {
                 echo 'Installation des dépendances avec pnpm...'
                 sh 'pnpm install'
             }
         }
-
         // --- Étape 3: Build (si nécessaire) ---
+        
         stage('Build') {
             steps {
                 echo 'Build de l’application (si script présent dans package.json)...'
