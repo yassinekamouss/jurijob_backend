@@ -9,7 +9,7 @@ pipeline {
         // --- Étape 1: Récupération du code ---
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/yasssinekamouss/jurijob_backend.git', branch: 'main'
+                git url: 'https://github.com/yassinekamouss/jurijob_backend.git', branch: 'main'
             }
         }
 
