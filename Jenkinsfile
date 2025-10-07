@@ -1,22 +1,21 @@
 pipeline {
-    // ...
+    agent any
+
+    environment {
+        APP_PORT = 5000
+    }
+
     stages {
-        // --- This entire stage should be removed ---
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/yassinekamouss/jurijob_backend.git', branch: 'main'
-            }
-        }
-        // --- End of stage to be removed ---
-        
+        // The code is already in the workspace from the implicit checkout.
+        // No need for an explicit checkout stage.
+
         stage('Install Dependencies') {
             steps {
                 echo 'Installation des dépendances avec pnpm...'
                 sh 'pnpm install'
             }
         }
-        // --- Étape 3: Build (si nécessaire) ---
-        
+
         stage('Build') {
             steps {
                 echo 'Build de l’application (si script présent dans package.json)...'
@@ -24,12 +23,10 @@ pipeline {
             }
         }
 
-        // --- Étape 4: Démarrage de l'application Express ---
         stage('Run Application') {
             steps {
                 script {
                     echo "Démarrage de l'application Express sur le port ${env.APP_PORT}..."
-                    // On lance l'app en arrière-plan pour ne pas bloquer le pipeline
                     sh "pnpm start &"
                     echo "L'application est en cours d'exécution."
                 }
