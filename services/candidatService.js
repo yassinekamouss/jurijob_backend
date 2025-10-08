@@ -3,14 +3,16 @@ const Candidat = require("../models/Candidat");
 async function createCandidatProfile(data) {
   const {
     userId,
+    posteActuel,
     niveauExperience,
     formationJuridique,
     specialisations,
     langues,
     domainExperiences,
-    typeTravail,
+    typeTravailRecherche,
     imageUrl,
-    villesTravail,
+    villesTravailRecherche,
+    modeTravailRecherche
 
   } = data;
   const existing = await Candidat.findOne({ userId });
@@ -27,8 +29,9 @@ async function createCandidatProfile(data) {
     domainExperiences,
     typeTravail,
     imageUrl,
-    villesTravail,
-    modeTravail
+    villesTravailRecherche,
+    modeTravailRecherche,
+    typeTravailRecherche
   });
 
   return await candidat.save();
