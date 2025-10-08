@@ -24,14 +24,13 @@ async function createCandidatProfile(data) {
     posteActuel,
     niveauExperience,
     formationJuridique,
-    speciisations,
-    languesal,
+    specialisations,
+    langues,
     domainExperiences,
-    typeTravail,
+    typeTravailRecherche,
     imageUrl,
     villesTravailRecherche,
-    modeTravailRecherche,
-    typeTravailRecherche
+    modeTravailRecherche
   });
 
   return await candidat.save();
