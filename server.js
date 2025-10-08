@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
 app.use("/api/candidats", candidatRoutes);
 app.use("/api/recruteurs", recruteurRoutes);
 app.use("/api/auth", authRoutes);
-
+app.use("/api/users", userRoutes);
 // Lancer le serveur avec connexion DB
 async function startServer() {
   try {
