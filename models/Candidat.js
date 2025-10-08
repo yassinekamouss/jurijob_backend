@@ -7,7 +7,13 @@ const candidatSchema = new mongoose.Schema(
     formationJuridique: { type: String, required: true },
     specialisations: { type: [String], default: null },
     domainExperiences: { type: [String], default: null },
-    langues: { type: [String], default: null },
+     langues: [
+      {
+        nom: { type: String, required: true },  
+        niveau: { type: String, required: true }
+      }
+    ],
+    typeTravail: {  type: String,  required: true},
     imageUrl: { type: String , default: null }
   },
   { timestamps: true }
