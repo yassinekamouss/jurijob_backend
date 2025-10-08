@@ -61,8 +61,6 @@ exports.logout = (req, res) => {
 };
 
 
-
-
 // Récupérer l'utilisateur connecté
 exports.me = async (req, res) => {
   try {

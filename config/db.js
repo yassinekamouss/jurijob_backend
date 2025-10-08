@@ -1,25 +1,27 @@
 const mongoose = require("mongoose");
 
-// Fonction pour se connecter à MongoDB
 const connectDB = async () => {
   try {
-    // Supporte MONGODB_URI (recommandé) et DB_URL (legacy)
     const mongoUri = process.env.MONGODB_URI || process.env.DB_URL;
-    if (!mongoUri) {
-      throw new Error(
-        "Aucune chaîne de connexion MongoDB fournie (MONGODB_URI ou DB_URL)."
-      );
-    }
+    if (!mongoUri) throw new Error("Aucune URI MongoDB fournie.");
 
     const conn = await mongoose.connect(mongoUri, {
-      // Options modernes par défaut avec mongoose >=7/8
+      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: 10,
     });
 
-    console.log(
-      `✅ MongoDB connecté: ${conn.connection.host}/${conn.connection.name}`
-    );
+    console.log(`✅ MongoDB connecté: ${conn.connection.host}/${conn.connection.name}`);
+
+    mongoose.connection.on("error", err => {
+      console.error("Erreur MongoDB:", err);
+    });
+
+    mongoose.connection.on("disconnected", () => {
+      console.warn("MongoDB déconnecté. Tentative de reconnexion...");
+    });
+
   } catch (error) {
-    console.error("❌ Erreur de connexion à MongoDB:", error.message);
+    console.error("❌ Impossible de se connecter à MongoDB:", error.message);
     process.exit(1);
   }
 };
