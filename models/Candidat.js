@@ -5,9 +5,10 @@ const candidatSchema = new mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     niveauExperience: { type: String, required: true },
     formationJuridique: { type: String, required: true },
-    specialisations: { type: [String], default: [] },
-    langues: { type: [String], default: [] },
-    imageUrl: { type: String }
+    specialisations: { type: [String], default: null },
+    domainExperiences: { type: [String], default: null },
+    langues: { type: [String], default: null },
+    imageUrl: { type: String , default: null }
   },
   { timestamps: true }
 );
