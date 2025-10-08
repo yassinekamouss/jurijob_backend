@@ -10,6 +10,8 @@ async function createCandidatProfile(data) {
     domainExperiences,
     typeTravail,
     imageUrl,
+    villesTravail,
+
   } = data;
   const existing = await Candidat.findOne({ userId });
   if (existing) {
@@ -17,6 +19,7 @@ async function createCandidatProfile(data) {
   }
   const candidat = new Candidat({
     userId,
+    posteActuel,
     niveauExperience,
     formationJuridique,
     speciisations,
@@ -24,6 +27,8 @@ async function createCandidatProfile(data) {
     domainExperiences,
     typeTravail,
     imageUrl,
+    villesTravail,
+    modeTravail
   });
 
   return await candidat.save();
