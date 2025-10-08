@@ -20,7 +20,7 @@ const app = express();
 app.use(
   cors({
     origin: process.env.FRONTEND_ORIGIN || "http://localhost:3000",
-    credentials: true, // ⚡ CRUCIAL pour les cookies
+    credentials: true, //  CRUCIAL pour les cookies
   })
 );
 app.use(cookieParser());
@@ -50,10 +50,10 @@ async function startServer() {
     await connectDB(); // attendre la connexion DB
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(` Server running on http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Failed to connect to DB, server not started", error);
+    console.error("Failed to connect to DB, server not started", error);
     process.exit(1); 
   }
 }
