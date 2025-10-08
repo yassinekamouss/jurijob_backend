@@ -1,8 +1,17 @@
 const Candidat = require("../models/Candidat");
 
 async function createCandidatProfile(data) {
-  const { userId, niveauExperience, formationJuridique, specialisations, langues , domainExperiences, imageUrl } = data;
-    const existing = await Candidat.findOne({ userId });
+  const {
+    userId,
+    niveauExperience,
+    formationJuridique,
+    specialisations,
+    langues,
+    domainExperiences,
+    typeTravail,
+    imageUrl,
+  } = data;
+  const existing = await Candidat.findOne({ userId });
   if (existing) {
     throw new Error("Le profil candidat existe déjà pour cet utilisateur");
   }
@@ -13,7 +22,8 @@ async function createCandidatProfile(data) {
     specialisations,
     langues,
     domainExperiences,
-    imageUrl
+    typeTravail,
+    imageUrl,
   });
 
   return await candidat.save();
@@ -32,7 +42,6 @@ async function updateCandidatProfile(userId, updateData) {
 
   return candidat;
 }
-
 
 module.exports = {
   createCandidatProfile,
