@@ -31,7 +31,7 @@ importers:
         version: 6.20.0
       mongoose:
         specifier: ^8.19.0
-        version: 8.19.0
+        version: 8.19.1
     devDependencies:
       nodemon:
         specifier: ^3.1.10
@@ -369,8 +369,8 @@ packages:
       socks:
         optional: true
 
-  mongoose@8.19.0:
-    resolution: {integrity: sha512-Z4iRiBkC7aR7a/rxQxtUAUBasFdiXkBuv3EY4NwkRbs92xKA4pwzi1Q4D+odFBe+ChahMNAYg2JP+7tWzZM0sQ==}
+  mongoose@8.19.1:
+    resolution: {integrity: sha512-oB7hGQJn4f8aebqE7mhE54EReb5cxVgpCxQCQj0K/cK3q4J3Tg08nFP6sM52nJ4Hlm8jsDnhVYpqIITZUAhckQ==}
     engines: {node: '>=16.20.1'}
 
   mpath@0.9.0:
@@ -888,7 +888,7 @@ snapshots:
       bson: 6.10.4
       mongodb-connection-string-url: 3.0.2
 
-  mongoose@8.19.0:
+  mongoose@8.19.1:
     dependencies:
       bson: 6.10.4
       kareem: 2.6.3
@@ -1097,5 +1097,5 @@ snapshots:
     dependencies:
       tr46: 5.1.1
       webidl-conversions: 7.0.0
+
   wrappy@1.0.2: {}
->>>>>>> 0eef3a9dccc7c459546c241e9a6aeb7219e418d6
