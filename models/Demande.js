@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const demandeSchema = new mongoose.Schema(
   {
-    recruteurId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    recruteurId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reférence au id de collection User
     titre: { type: String, required: true }, 
     description: { type: String },
     posteRecherche: { type: [String], required: true },
