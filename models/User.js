@@ -7,7 +7,9 @@ const userSchema = new mongoose.Schema(
     telephone: { type: String },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["candidat", "recruteur", "admin"], required: true }
+    role: { type: String, enum: ["candidat", "recruteur", "admin"], required: true },
+    isActive: { type: Boolean, default: true },
+    isArchived: { type: Boolean, default: false },
   },
   { timestamps: true } 
 );

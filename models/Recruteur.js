@@ -7,7 +7,7 @@ const recruteurSchema = new mongoose.Schema(
     poste: { type: String, required: true },
     typeOrganisation: { type: String, required: true },
     tailleEntreprise: { type: String, required: true },
-    siteWeb: { type: String },
+    siteWeb: { type: String , default: null },
     ville: { type: String, required: true },
     codePostal: { type: String, required: true }
   },

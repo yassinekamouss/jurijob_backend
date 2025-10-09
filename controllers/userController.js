@@ -1,4 +1,4 @@
-const { createUser } = require("../services/userService");
+const { createUser , deleteUserAndProfile , updateUser } = require("../services/userService");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -11,5 +11,39 @@ exports.registerUser = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+
+/**
+ * Supprime un utilisateur et son profil associé
+ */
+exports.deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const result = await deleteUserAndProfile(userId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+
+/*update user*/
+exports.updateUserInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedUser = await updateUser(id, updateData);
+
+    res.status(200).json({
+      message: "Utilisateur mis à jour avec succès",
+      user: updatedUser
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

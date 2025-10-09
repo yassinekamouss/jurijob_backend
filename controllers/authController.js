@@ -1,4 +1,4 @@
-const { loginUser } = require("../services/authService");
+const { loginUser , getCurrentUser } = require("../services/authService");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
@@ -61,8 +61,6 @@ exports.logout = (req, res) => {
 };
 
 
-
-
 // Récupérer l'utilisateur connecté
 exports.me = async (req, res) => {
   try {
@@ -72,15 +70,11 @@ exports.me = async (req, res) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-
-    const user = await User.findById(decoded.id).select("-password"); // On ne renvoie pas le mot de passe
-    if (!user) {
-      return res.status(404).json({ message: "Utilisateur introuvable" });
-    }
+    const user = await getCurrentUser(token);
+   
 
     res.status(200).json({ user });
   } catch (err) {
-    res.status(401).json({ message: "Token invalide ou expiré" });
+    res.status(401).json({ message: err.message || "Token invalide ou expiré" });
   }
 };
