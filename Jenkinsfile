@@ -25,7 +25,7 @@ pipeline {
             steps {
                 echo "Construction de l'image Docker..."
                 sh '''
-                    docker build -t $DOCKER_IMAGE:3 .
+                    docker build -t $DOCKER_IMAGE:$IMAGE_TAG .
                     docker tag $DOCKER_IMAGE:$IMAGE_TAG $DOCKER_IMAGE:latest
                 '''
             }
