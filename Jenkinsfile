@@ -2,41 +2,54 @@ pipeline {
     agent any
 
     environment {
-        APP_PORT = 5000
+        DOCKERHUB_CREDENTIALS = credentials('yassinekamouss-dockerhub') 
+        DOCKER_IMAGE = "yassinekamouss/jurijob_backend" // à adapter
     }
 
     stages {
-        // The code is already in the workspace from the implicit checkout.
-        // No need for an explicit checkout stage.
-
-        stage('Install Dependencies') {
+        stage('Checkout') {
             steps {
-                echo 'Installation des dépendances avec pnpm...'
+                echo "Récupération du code depuis GitHub..."
+                checkout scm
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                echo "Installation des dépendances avec pnpm..."
                 sh 'pnpm install'
             }
         }
 
-        stage('Build') {
+        stage('Build Docker image') {
             steps {
-                echo 'Build de l’application (si script présent dans package.json)...'
-                sh 'pnpm run build || echo "Aucun build à effectuer"'
+                echo "Construction de l'image Docker..."
+                script {
+                    def imageTag = "${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                    sh "docker build -t ${imageTag} ."
+                    sh "docker tag ${imageTag} ${DOCKER_IMAGE}:latest"
+                }
             }
         }
 
-        stage('Run Application') {
+        stage('Push to Docker Hub') {
             steps {
+                echo "Connexion et push de l'image sur Docker Hub..."
                 script {
-                    echo "Démarrage de l'application Express sur le port ${env.APP_PORT}..."
-                    sh "pnpm start &"
-                    echo "L'application est en cours d'exécution."
+                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
+                    sh "docker push ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
+                    sh "docker push ${DOCKER_IMAGE}:latest"
                 }
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline terminé.'
+        success {
+            echo "✅ Pipeline terminé avec succès !"
+        }
+        failure {
+            echo "❌ Le pipeline a échoué."
         }
     }
 }
