@@ -1,5 +1,5 @@
 const { findUserById } = require("../services/userService");
-const { createCandidatProfile , deleteCandidatProfile , updateCandidatProfile } = require("../services/candidatService");
+const { createCandidatProfile  , updateCandidatProfile } = require("../services/candidatService");
 
 exports.completeCandidatProfile = async (req, res) => {
   try {
@@ -28,7 +28,7 @@ exports.completeCandidatProfile = async (req, res) => {
 
 exports.updateCandidatProfile = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const  userId  = req.userId;
 
     const user = await findUserById(userId);
     if (!user) {

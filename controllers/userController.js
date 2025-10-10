@@ -20,7 +20,7 @@ exports.registerUser = async (req, res) => {
  */
 exports.deleteUser = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId  = req.userId;
 
     const result = await deleteUserAndProfile(userId);
 
@@ -34,7 +34,7 @@ exports.deleteUser = async (req, res) => {
 /*update user*/
 exports.updateUserInfo = async (req, res) => {
   try {
-    const { id } = req.params;
+    const  id = req.userId;
     const updateData = req.body;
 
     const updatedUser = await updateUser(id, updateData);

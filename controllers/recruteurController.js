@@ -29,7 +29,7 @@ exports.completeRecruteurProfile = async (req, res) => {
 
 exports.updateRecruteurProfile = async (req, res) => {
   try {
-    const { userId } = req.body; 
+    const userId  = req.userId; 
     const user = await findUserById(userId);
     if (!user) {
       return res.status(404).json({ message: "Utilisateur introuvable" });
