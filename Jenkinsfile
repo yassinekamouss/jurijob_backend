@@ -21,15 +21,21 @@ pipeline {
             }
         }
 
-        stage('Build Docker image') {
+       stage('Build Docker image') {
             steps {
-                echo "Construction de l'image Docker..."
-                sh '''
-                    docker build -t $DOCKER_IMAGE:$IMAGE_TAG .
-                    docker tag $DOCKER_IMAGE:$IMAGE_TAG $DOCKER_IMAGE:latest
-                '''
+                echo "Connexion à Docker Hub et construction de l'image Docker..."
+                withCredentials([usernamePassword(credentialsId: 'yassinekamouss-dockerhub',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker build -t $DOCKER_IMAGE:$IMAGE_TAG .
+                        docker tag $DOCKER_IMAGE:$IMAGE_TAG $DOCKER_IMAGE:latest
+                    '''
+                }
             }
         }
+
 
         stage('Push to Docker Hub') {
             steps {
