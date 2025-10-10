@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('yassinekamouss-dockerhub') 
-        DOCKER_IMAGE = "yassinekamouss/jurijob_backend" // à adapter
+        DOCKER_IMAGE = "yassinekamouss/jurijob_backend",
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
@@ -24,32 +24,35 @@ pipeline {
         stage('Build Docker image') {
             steps {
                 echo "Construction de l'image Docker..."
-                script {
-                    def imageTag = "${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                    sh "docker build -t ${imageTag} ."
-                    sh "docker tag ${imageTag} ${DOCKER_IMAGE}:latest"
-                }
+                sh '''
+                    docker build -t $DOCKER_IMAGE:3 .
+                    docker tag $DOCKER_IMAGE:$IMAGE_TAG $DOCKER_IMAGE:latest
+                '''
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
                 echo "Connexion et push de l'image sur Docker Hub..."
-                script {
-                    sh "echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} --password-stdin"
-                    sh "docker push ${DOCKER_IMAGE}:${env.BUILD_NUMBER}"
-                    sh "docker push ${DOCKER_IMAGE}:latest"
+                withCredentials([usernamePassword(credentialsId: 'yassinekamouss-dockerhub',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push $DOCKER_IMAGE:$IMAGE_TAG
+                        docker push $DOCKER_IMAGE:latest
+                    '''
                 }
             }
         }
     }
 
     post {
-        success {
-            echo "✅ Pipeline terminé avec succès !"
-        }
         failure {
             echo "❌ Le pipeline a échoué."
+        }
+        success {
+            echo "✅ Pipeline terminé avec succès !"
         }
     }
 }
