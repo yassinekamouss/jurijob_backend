@@ -2,41 +2,63 @@ pipeline {
     agent any
 
     environment {
-        APP_PORT = 5000
+        DOCKER_IMAGE = "yassinekamouss/jurijob_backend"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
-        // The code is already in the workspace from the implicit checkout.
-        // No need for an explicit checkout stage.
-
-        stage('Install Dependencies') {
+        stage('Checkout') {
             steps {
-                echo 'Installation des dépendances avec pnpm...'
+                echo "Récupération du code depuis GitHub..."
+                checkout scm
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                echo "Installation des dépendances avec pnpm..."
                 sh 'pnpm install'
             }
         }
 
-        stage('Build') {
+       stage('Build Docker image') {
             steps {
-                echo 'Build de l’application (si script présent dans package.json)...'
-                sh 'pnpm run build || echo "Aucun build à effectuer"'
+                echo "Connexion à Docker Hub et construction de l'image Docker..."
+                withCredentials([usernamePassword(credentialsId: 'yassinekamouss-dockerhub',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker build -t $DOCKER_IMAGE:$IMAGE_TAG .
+                        docker tag $DOCKER_IMAGE:$IMAGE_TAG $DOCKER_IMAGE:latest
+                    '''
+                }
             }
         }
 
-        stage('Run Application') {
+
+        stage('Push to Docker Hub') {
             steps {
-                script {
-                    echo "Démarrage de l'application Express sur le port ${env.APP_PORT}..."
-                    sh "pnpm start &"
-                    echo "L'application est en cours d'exécution."
+                echo "Connexion et push de l'image sur Docker Hub..."
+                withCredentials([usernamePassword(credentialsId: 'yassinekamouss-dockerhub',
+                                                 usernameVariable: 'DOCKER_USER',
+                                                 passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                        docker push $DOCKER_IMAGE:$IMAGE_TAG
+                        docker push $DOCKER_IMAGE:latest
+                    '''
                 }
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline terminé.'
+        failure {
+            echo "❌ Le pipeline a échoué."
+        }
+        success {
+            echo "✅ Pipeline terminé avec succès !"
         }
     }
 }
