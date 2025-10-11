@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const candidatSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    posteActuel: { type: String, required: true },
+    postRecherche: { type: String, required: true },
     niveauExperience: { type: String, required: true },
     formationJuridique: { type: String, required: true },
     specialisations: { type: [String], default: null },

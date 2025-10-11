@@ -56,7 +56,7 @@ async function startServer() {
     });
   } catch (error) {
     console.error("Failed to connect to DB, server not started", error);
-    process.exit(1); 
+    process.exit(1);
   }
 }
 startServer();
