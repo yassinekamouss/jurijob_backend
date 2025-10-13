@@ -3,7 +3,7 @@ const Candidat = require("../models/Candidat");
 async function createCandidatProfile(data) {
   const {
     userId,
-    posteActuel,
+    PosteRecherche,
     niveauExperience,
     formationJuridique,
     specialisations,
@@ -21,7 +21,7 @@ async function createCandidatProfile(data) {
   }
   const candidat = new Candidat({
     userId,
-    posteActuel,
+    PosteRecherche,
     niveauExperience,
     formationJuridique,
     specialisations,
