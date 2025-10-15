@@ -16,8 +16,7 @@ const candidatSchema = new mongoose.Schema(
     ],
     typeTravailRecherche: {  type: String,  required: true},// Ex : "emploi", "stage"
     modeTravailRecherche: { type: String, required: true },
-    villesTravailRecherche: { type: [String], required: true },
-    imageUrl: { type: String , default: null }
+    villesTravailRecherche: { type: [String], required: true }
   },
   { timestamps: true }
 );

@@ -2,8 +2,11 @@ const User = require("../models/User");
 const Candidat = require("../models/Candidat");
 const Recruteur = require("../models/Recruteur");
 const bcrypt = require("bcryptjs");
+const cloudinary = require("../utils/cloudinaryConfig");
+const fs =require("fs");
 
-async function createUser(data) {
+
+async function createUser(data, imageFile) {
   const { nom, prenom, email, password, telephone, role } = data;
 
   // Vérifier si l'email existe déjà
@@ -15,6 +18,20 @@ async function createUser(data) {
   // Hash du mot de passe
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  let imageUrl = null;
+      if (imageFile) {
+        try {
+          const result = await cloudinary.uploader.upload(imageFile.path, {
+            folder: "imageProfile",
+            use_filename: true,
+            unique_filename: true
+          });
+          imageUrl = result.secure_url;
+        } finally {
+          fs.unlinkSync(imageFile.path);
+        }
+      }
+
   const user = new User({
     nom,
     prenom,
@@ -22,6 +39,7 @@ async function createUser(data) {
     email,
     password: hashedPassword,
     role,
+    imageUrl,
   });
 
   return await user.save();
