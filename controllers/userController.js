@@ -2,7 +2,7 @@ const { createUser , deleteUserAndProfile , updateUser } = require("../services/
 
 exports.registerUser = async (req, res) => {
   try {
-    const user = await createUser(req.body);
+    const user = await createUser(req.body,  req.file);
 
     res.status(201).json({
       message: "Utilisateur créé avec succès",

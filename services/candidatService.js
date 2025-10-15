@@ -10,7 +10,6 @@ async function createCandidatProfile(data) {
     langues,
     domainExperiences,
     typeTravailRecherche,
-    imageUrl,
     villesTravailRecherche,
     modeTravailRecherche
 
@@ -28,7 +27,6 @@ async function createCandidatProfile(data) {
     langues,
     domainExperiences,
     typeTravailRecherche,
-    imageUrl,
     villesTravailRecherche,
     modeTravailRecherche
   });

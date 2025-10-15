@@ -12,6 +12,8 @@ const candidatRoutes = require("./routes/candidatRoutes");
 const recruteurRoutes = require("./routes/recruteurRoutes");
 const authRoutes = require("./routes/authRoutes");
 const demandeRoutes = require("./routes/demandeRoutes");
+const statsRecruteurRoutes = require("./routes/statsRecruteurRoutes");
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -46,6 +48,7 @@ app.use("/api/recruteurs", recruteurRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/demandes", demandeRoutes);
+app.use("/api/stats", statsRecruteurRoutes); 
 // Lancer le serveur avec connexion DB
 async function startServer() {
   try {
