@@ -37,7 +37,7 @@ exports.updateUserInfo = async (req, res) => {
     const  id = req.userId;
     const updateData = req.body;
 
-    const updatedUser = await updateUser(id, updateData);
+    const updatedUser = await updateUser(id, updateData , req.file);
 
     res.status(200).json({
       message: "Utilisateur mis à jour avec succès",

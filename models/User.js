@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     imageUrl: { type: String , default: null },
+    imagePublicId: { type: String , default: null },
     role: { type: String, enum: ["candidat", "recruteur", "admin"], required: true },
     isActive: { type: Boolean, default: true },
     isArchived: { type: Boolean, default: false },

@@ -7,5 +7,5 @@ const upload = multer({ dest: "uploads/" }); // Dossier temporaire pour stocker 
 
 router.post("/register", upload.single("image"), userController.registerUser);
 router.delete("/delete-user", authenticateToken, userController.deleteUser);
-router.patch("/update-user", authenticateToken, userController.updateUserInfo);
+router.patch("/update-user",  authenticateToken, upload.single("image"), userController.updateUserInfo);
 module.exports = router;
