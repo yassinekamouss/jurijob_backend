@@ -27,16 +27,56 @@ async function updateDemande(demandeId, recruteurId, data) {
 }
 
 
-/* Récupérer toutes les demandes d'un recruteur avec pagination */
-async function getDemandesOfRecruteur(recruteurId, page = 1, limit = 10) {
+/* Récupérer toutes les demandes d'un recruteur avec pagination et filtres */
+async function getDemandesOfRecruteur(recruteurId, filters = {}, page = 1, limit = 10) {
   const skip = (page - 1) * limit;
+
+  // Construction dynamique de la requête MongoDB
+  const query = { recruteurId };
+
+  if (filters.titre) {
+    query.titre = { $regex: filters.titre, $options: "i" }; // recherche insensible à la casse
+  }
+  if (filters.description) {
+    query.description = { $regex: filters.description, $options: "i" };
+  }
+  if (filters.posteRecherche?.length) {
+    query.posteRecherche = { $in: filters.posteRecherche };
+  }
+  if (filters.niveauExperience?.length) {
+    query.niveauExperience = { $in: filters.niveauExperience };
+  }
+  if (filters.typeTravail?.length) {
+    query.typeTravail = { $in: filters.typeTravail };
+  }
+  if (filters.modeTravail?.length) {
+    query.modeTravail = { $in: filters.modeTravail };
+  }
+  if (filters.villesTravail?.length) {
+    query.villesTravail = { $in: filters.villesTravail };
+  }
+  if (filters.formationJuridique?.length) {
+    query.formationJuridique = { $in: filters.formationJuridique };
+  }
+  if (filters.specialisations?.length) {
+    query.specialisations = { $in: filters.specialisations };
+  }
+  if (filters.domainExperiences?.length) {
+    query.domainExperiences = { $in: filters.domainExperiences };
+  }
+  if (filters.statut) {
+    query.statut = filters.statut;
+  }
+
+  // Exécution de la requête + pagination
   const [demandes, total] = await Promise.all([
-    Demande.find({ recruteurId })
+    Demande.find(query)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 }),
-    Demande.countDocuments({ recruteurId })
+    Demande.countDocuments(query)
   ]);
+
   return { demandes, total, page, limit };
 }
 

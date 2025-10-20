@@ -46,15 +46,34 @@ async function updateDemande(req, res) {
   }
 }
 
-
-/* Récupérer toutes les demandes d'un recruteur avec pagination */
+/*recuperer toutes les demandes d'un recruteur avec pagination et filtres*/
 async function getAllDemandesOfARecruteur(req, res) {
   try {
     const recruteurId = req.userId;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    const result = await demandeService.getDemandesOfRecruteur(recruteurId, page, limit);
+    const parseArray = (value) => {
+      if (!value) return [];
+      if (Array.isArray(value)) return value; // déjà un tableau
+      return value.split(","); // si c'est une seule chaîne
+    };
+
+    const filters = {
+      titre: req.query.titre,
+      description: req.query.description,
+      posteRecherche: parseArray(req.query.posteRecherche),
+      niveauExperience: parseArray(req.query.niveauExperience),
+      typeTravail: parseArray(req.query.typeTravail),
+      modeTravail: parseArray(req.query.modeTravail),
+      villesTravail: parseArray(req.query.villesTravail),
+      formationJuridique: parseArray(req.query.formationJuridique),
+      specialisations: parseArray(req.query.specialisations),
+      domainExperiences: parseArray(req.query.domainExperiences),
+      statut: req.query.statut
+    };
+
+    const result = await demandeService.getDemandesOfRecruteur(recruteurId, filters, page, limit);
 
     return res.status(200).json({
       message: "Demandes récupérées avec succès",
