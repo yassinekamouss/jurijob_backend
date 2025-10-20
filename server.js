@@ -4,15 +4,15 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 dotenv.config();
 
-const connectDB = require("../config/db");
+const connectDB = require("./config/db");
 
 // Import des routes
-const userRoutes = require("../routes/userRoutes");
-const candidatRoutes = require("../routes/candidatRoutes");
-const recruteurRoutes = require("../routes/recruteurRoutes");
-const authRoutes = require("../routes/authRoutes");
-const demandeRoutes = require("../routes/demandeRoutes");
-const statsRecruteurRoutes = require("../routes/statsRecruteurRoutes");
+const userRoutes = require("./routes/userRoutes");
+const candidatRoutes = require("./routes/candidatRoutes");
+const recruteurRoutes = require("./routes/recruteurRoutes");
+const authRoutes = require("./routes/authRoutes");
+const demandeRoutes = require("./routes/demandeRoutes");
+const statsRecruteurRoutes = require("./routes/statsRecruteurRoutes");
 
 
 const PORT = process.env.PORT || 3000;
@@ -50,5 +50,15 @@ app.use("/api/users", userRoutes);
 app.use("/api/demandes", demandeRoutes);
 app.use("/api/stats", statsRecruteurRoutes); 
 // Lancer le serveur avec connexion DB
+
+app.listen(PORT, async () => {
+  try {
+    await connectDB();
+    console.log(`Server running on port ${PORT}`);
+  }
+  catch (error) {
+    console.error("Failed to connect to the database:", error);
+  }
+});
 
 module.exports = app;
