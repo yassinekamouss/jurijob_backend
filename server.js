@@ -50,16 +50,15 @@ app.use("/api/users", userRoutes);
 app.use("/api/demandes", demandeRoutes);
 app.use("/api/stats", statsRecruteurRoutes); 
 // Lancer le serveur avec connexion DB
-async function startServer() {
-  try {
-    await connectDB(); // attendre la connexion DB
 
-    app.listen(PORT, () => {
-      console.log(` Server running on http://localhost:${PORT}`);
-    });
-  } catch (error) {
-    console.error("Failed to connect to DB, server not started", error);
-    process.exit(1);
+app.listen(PORT, async () => {
+  try {
+    await connectDB();
+    console.log(`Server running on port ${PORT}`);
   }
-}
-startServer();
+  catch (error) {
+    console.error("Failed to connect to the database:", error);
+  }
+});
+
+module.exports = app;
