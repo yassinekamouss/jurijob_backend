@@ -1,7 +1,8 @@
 {
   "name": "jurijob_backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "api/index.js",
+  "packageManager": "pnpm@10.18.0",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
