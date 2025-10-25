@@ -22,8 +22,8 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN || "http://localhost:3000",
-    credentials: true, //  CRUCIAL pour les cookies
+    origin: process.env.FRONTEND_ORIGIN || "https://jurijob-frontend.vercel.app",
+    credentials: true,
   })
 );
 app.use(cookieParser());
