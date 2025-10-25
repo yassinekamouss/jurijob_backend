@@ -14,8 +14,8 @@ const candidatSchema = new mongoose.Schema(
         niveau: { type: String, required: true }
       }
     ],
-    typeTravailRecherche: { type: String, required: true },// Ex : "emploi", "stage"
-    modeTravailRecherche: { type: String, required: true },
+    typeTravailRecherche: { type: [String], required: true },// Ex : "emploi", "stage"
+    modeTravailRecherche: { type: [String], required: true },
     villesTravailRecherche: { type: [String], required: true },
   },
   { timestamps: true }
