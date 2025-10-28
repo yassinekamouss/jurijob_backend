@@ -80,8 +80,49 @@ async function getDemandesOfRecruteur(recruteurId, filters = {}, page = 1, limit
   return { demandes, total, page, limit };
 }
 
+
+/* Récupérer une demande par ID */
+async function getDemandeById(demandeId, recruteurId) {
+  const demande = await Demande.findById(demandeId);
+  if (!demande) {
+    const err = new Error("Demande non trouvée");
+    err.status = 404;
+    throw err;
+  }
+
+  if (demande.recruteurId.toString() !== recruteurId) {
+    const err = new Error("Accès refusé : vous ne pouvez consulter que vos propres demandes");
+    err.status = 403;
+    throw err;
+  }
+
+  return demande;
+}
+
+/* Supprimer une demande */
+async function deleteDemande(demandeId, recruteurId) {
+  const demande = await Demande.findById(demandeId);
+  if (!demande) {
+    const err = new Error("Demande non trouvée");
+    err.status = 404;
+    throw err;
+  }
+
+  if (demande.recruteurId.toString() !== recruteurId) {
+    const err = new Error("Accès refusé : vous ne pouvez supprimer que vos propres demandes");
+    err.status = 403;
+    throw err;
+  }
+
+  await Demande.findByIdAndDelete(demandeId);
+  return { message: "Demande supprimée avec succès" };
+}
+
+
 module.exports = {
   createDemande,
   updateDemande,
-  getDemandesOfRecruteur
+  getDemandesOfRecruteur,
+  getDemandeById,
+  deleteDemande
 };

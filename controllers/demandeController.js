@@ -85,9 +85,51 @@ async function getAllDemandesOfARecruteur(req, res) {
   }
 }
 
+/**
+ * Récupérer une seule demande par ID
+ */
+async function getDemandeById(req, res) {
+  try {
+    const { id } = req.params;
+    const recruteurId = req.userId;
+
+    const demande = await demandeService.getDemandeById(id, recruteurId);
+
+    return res.status(200).json({
+      message: "Demande récupérée avec succès",
+      demande
+    });
+  } catch (error) {
+    console.error("Erreur récupération demande :", error);
+    return res.status(error.status || 500).json({
+      message: error.message || "Erreur lors de la récupération de la demande"
+    });
+  }
+}
+
+/**
+ * Supprimer une demande
+ */
+async function deleteDemande(req, res) {
+  try {
+    const { id } = req.params;
+    const recruteurId = req.userId;
+
+    const result = await demandeService.deleteDemande(id, recruteurId);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Erreur suppression demande :", error);
+    return res.status(error.status || 500).json({
+      message: error.message || "Erreur lors de la suppression de la demande"
+    });
+  }
+}
 
 module.exports = {
   createDemande,
   updateDemande,
-  getAllDemandesOfARecruteur
+  getAllDemandesOfARecruteur,
+  getDemandeById,
+  deleteDemande
 };
