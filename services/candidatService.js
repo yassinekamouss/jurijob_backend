@@ -11,8 +11,9 @@ async function createCandidatProfile(data) {
     domainExperiences,
     typeTravailRecherche,
     villesTravailRecherche,
-    modeTravailRecherche
-
+    modeTravailRecherche,
+    formations,
+    experiences
   } = data;
   const existing = await Candidat.findOne({ userId });
   if (existing) {
@@ -28,7 +29,9 @@ async function createCandidatProfile(data) {
     domainExperiences,
     typeTravailRecherche,
     villesTravailRecherche,
-    modeTravailRecherche
+    modeTravailRecherche,
+    formations,
+    experiences
   });
 
   return await candidat.save();

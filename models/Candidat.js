@@ -17,6 +17,28 @@ const candidatSchema = new mongoose.Schema(
     typeTravailRecherche: { type: [String], required: true },// Ex : "emploi", "stage"
     modeTravailRecherche: { type: [String], required: true },
     villesTravailRecherche: { type: [String], required: true },
+    formations: [
+      {
+        id: { type: String, required: true },
+        anneeDebut: { type: String, required: true },
+        anneeFin: { type: String, required: true },
+        niveau: { type: String, required: true },
+        domaine: { type: String, required: true },
+        ecole: { type: String, required: true },
+        diplomaFile: { type: String, required: true }
+      }
+    ],
+    experiences: [
+      {
+        id: { type: String, required: true },
+        debut: { type: String, required: true },
+        fin: { type: String, required: true },
+        type: { type: String, required: true },
+        entreprise: { type: String, required: true },
+        poste: { type: String, required: true }
+      }
+    ]
+
   },
   { timestamps: true }
 );
