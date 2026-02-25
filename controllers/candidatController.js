@@ -68,6 +68,41 @@ exports.updateCandidatProfile = async (req, res) => {
 
     let updateData = req.body;
 
+    // Si la requête contient 'data' (envoyé via FormData), le parser au cas où
+    if (req.body.data) {
+      updateData = JSON.parse(req.body.data);
+    }
+
+    // On retire formations et experiences de updateData pour éviter la modification via cet endpoint
+    delete updateData.formations;
+    delete updateData.experiences;
+
+    const updatedProfile = await updateCandidatProfile(userId, updateData);
+
+    res.status(200).json({
+      message: "Profil candidat mis à jour avec succès",
+      candidat: updatedProfile,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.updateCandidatParcours = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await findUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+
+    if (user.role !== "candidat") {
+      return res.status(400).json({ message: "Ce user n'est pas un candidat" });
+    }
+
+    let updateData = req.body;
+
     // Si la requête contient 'data' (envoyé via FormData), le parser
     if (req.body.data) {
       updateData = JSON.parse(req.body.data);
@@ -93,10 +128,15 @@ exports.updateCandidatProfile = async (req, res) => {
       });
     }
 
-    const updatedProfile = await updateCandidatProfile(userId, updateData);
+    // Ne mettre à jour que les formations et expériences
+    const parcoursData = {};
+    if (updateData.formations) parcoursData.formations = updateData.formations;
+    if (updateData.experiences) parcoursData.experiences = updateData.experiences;
+
+    const updatedProfile = await updateCandidatProfile(userId, parcoursData);
 
     res.status(200).json({
-      message: "Profil candidat mis à jour avec succès",
+      message: "Parcours (formations/expériences) mis à jour avec succès",
       candidat: updatedProfile,
     });
   } catch (error) {

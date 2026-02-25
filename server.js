@@ -48,7 +48,16 @@ app.use("/api/recruteurs", recruteurRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/demandes", demandeRoutes);
-app.use("/api/stats", statsRecruteurRoutes); 
+app.use("/api/stats", statsRecruteurRoutes);
+
+
+//redirection du route /api/diplomas vers le dossier public/diplomas
+const path = require('path');
+
+// 1. Assure-toi d'utiliser express.static
+// Cette ligne dit : quand on demande "/api/diplomas", regarde dans le dossier "./uploads/diplomas"
+app.use('/api/diplomas', express.static(path.join(__dirname, 'public/diplomas')));
+
 // Lancer le serveur avec connexion DB
 
 app.listen(PORT, async () => {
@@ -60,5 +69,7 @@ app.listen(PORT, async () => {
     console.error("Failed to connect to the database:", error);
   }
 });
+
+
 
 module.exports = app;

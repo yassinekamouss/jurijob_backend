@@ -19,4 +19,5 @@ const upload = multer({ storage: storage });
 
 router.post("/complete-profile", upload.any(), candidatController.completeCandidatProfile);
 router.patch("/update-profile", authenticateToken, upload.any(), candidatController.updateCandidatProfile);
+router.patch("/update-parcours", authenticateToken, upload.any(), candidatController.updateCandidatParcours);
 module.exports = router;
