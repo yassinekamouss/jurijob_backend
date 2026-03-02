@@ -5,6 +5,10 @@ const cors = require("cors");
 dotenv.config();
 
 const connectDB = require("./config/db");
+const initStorage = require("./utils/initStorage");
+
+// Initialize directories
+initStorage();
 
 // Import des routes
 const userRoutes = require("./routes/userRoutes");

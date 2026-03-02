@@ -23,6 +23,8 @@ dist/
 build/
 coverage/
 
+public/diplomas/*
+uploads/*
 # OS generated files
 .DS_Store
 Thumbs.db
