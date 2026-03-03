@@ -7,18 +7,28 @@ exports.completeCandidatProfile = async (req, res) => {
 
     // Si la requête contient 'data' (envoyé via FormData), le parser
     if (req.body.data) {
-      candidatData = JSON.parse(req.body.data);
+      try {
+        candidatData = JSON.parse(req.body.data);
+      } catch (parseError) {
+        return res.status(400).json({
+          message: "Erreur lors du parsing des données JSON (champ 'data')",
+          error: parseError.message
+        });
+      }
     }
 
     const { userId } = candidatData;
+    if (!userId) {
+      return res.status(400).json({ message: "L'identifiant de l'utilisateur (userId) est manquant." });
+    }
 
     const user = await findUserById(userId);
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur introuvable" });
+      return res.status(404).json({ message: "Utilisateur introuvable dans la base de données." });
     }
 
     if (user.role !== "candidat") {
-      return res.status(400).json({ message: "Ce user n'est pas un candidat" });
+      return res.status(400).json({ message: "Cet utilisateur n'est pas enregistré en tant que candidat." });
     }
 
     // Lier les chemins de fichiers uploadés aux formations correspondantes
@@ -27,18 +37,31 @@ exports.completeCandidatProfile = async (req, res) => {
         // Le nom du champ depuis le frontend est 'diploma_ID'
         if (file.fieldname.startsWith('diploma_')) {
           const formationId = file.fieldname.replace('diploma_', '');
-          const formation = candidatData.formations.find(f => f.id === formationId);
-          if (formation) {
-            // Remplacer les antislashs par des slashs pour un chemin web valide
-            // On enlève "public/" pour que ce soit accessible via l'URL racine si Express sert "public" en statique
-            let filePath = file.path.replace(/\\/g, '/');
-            if (filePath.startsWith('public/')) {
-              filePath = filePath.substring(7); // enlève 'public/'
+
+          if (candidatData.formations) {
+            const formation = candidatData.formations.find(f => f.id === formationId);
+            if (formation) {
+              // Remplacer les antislashs par des slashs pour un chemin web valide
+              let filePath = file.path.replace(/\\/g, '/');
+              if (filePath.startsWith('public/')) {
+                filePath = filePath.substring(7); // enlève 'public/'
+              }
+              formation.diplomaFile = '/' + filePath;
             }
-            formation.diplomaFile = '/' + filePath;
           }
         }
       });
+    }
+
+    // Vérification : chaque formation doit avoir son diplomaFile
+    if (candidatData.formations && candidatData.formations.length > 0) {
+      const missingFiles = candidatData.formations.filter(f => !f.diplomaFile);
+      if (missingFiles.length > 0) {
+        return res.status(400).json({
+          message: "Certains diplômes (PDF) n'ont pas été reçus par le serveur.",
+          missingFormationIds: missingFiles.map(f => f.id)
+        });
+      }
     }
 
     const candidatProfile = await createCandidatProfile(candidatData);
@@ -48,7 +71,18 @@ exports.completeCandidatProfile = async (req, res) => {
       candidat: candidatProfile,
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error in completeCandidatProfile:", error);
+
+    // Extraire les messages d'erreur de validation Mongoose
+    let errorMsg = error.message;
+    if (error.name === 'ValidationError') {
+      errorMsg = Object.values(error.errors).map(err => err.message).join(', ');
+    }
+
+    res.status(400).json({
+      message: errorMsg,
+      errorType: error.name
+    });
   }
 };
 
