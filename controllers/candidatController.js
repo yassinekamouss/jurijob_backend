@@ -3,6 +3,17 @@ const { createCandidatProfile, updateCandidatProfile } = require("../services/ca
 
 exports.completeCandidatProfile = async (req, res) => {
   try {
+    // Diagnostique de base pour le frontend
+    if (!req.body) {
+      return res.status(400).json({
+        message: "Erreur critique : le corps de la requête (req.body) est inexistant.",
+        debug: {
+          contentType: req.headers["content-type"],
+          hasFiles: !!(req.files && req.files.length > 0)
+        }
+      });
+    }
+
     let candidatData = req.body;
 
     // Si la requête contient 'data' (envoyé via FormData), le parser
@@ -12,14 +23,23 @@ exports.completeCandidatProfile = async (req, res) => {
       } catch (parseError) {
         return res.status(400).json({
           message: "Erreur lors du parsing des données JSON (champ 'data')",
-          error: parseError.message
+          error: parseError.message,
+          receivedValue: req.body.data
         });
       }
     }
 
-    const { userId } = candidatData;
+    // Accès sécurisé à userId sans déstructuration directe qui pourrait planter
+    const userId = candidatData ? candidatData.userId : null;
+
     if (!userId) {
-      return res.status(400).json({ message: "L'identifiant de l'utilisateur (userId) est manquant." });
+      return res.status(400).json({
+        message: "L'identifiant de l'utilisateur (userId) est manquant dans les données reçues.",
+        debug: {
+          hasCandidatData: !!candidatData,
+          keysReceived: candidatData ? Object.keys(candidatData) : []
+        }
+      });
     }
 
     const user = await findUserById(userId);
@@ -41,7 +61,6 @@ exports.completeCandidatProfile = async (req, res) => {
           if (candidatData.formations) {
             const formation = candidatData.formations.find(f => f.id === formationId);
             if (formation) {
-              // Remplacer les antislashs par des slashs pour un chemin web valide
               let filePath = file.path.replace(/\\/g, '/');
               if (filePath.startsWith('public/')) {
                 filePath = filePath.substring(7); // enlève 'public/'
@@ -53,12 +72,12 @@ exports.completeCandidatProfile = async (req, res) => {
       });
     }
 
-    // Vérification : chaque formation doit avoir son diplomaFile
+    // Vérification finale : chaque formation doit avoir son diplomaFile
     if (candidatData.formations && candidatData.formations.length > 0) {
       const missingFiles = candidatData.formations.filter(f => !f.diplomaFile);
       if (missingFiles.length > 0) {
         return res.status(400).json({
-          message: "Certains diplômes (PDF) n'ont pas été reçus par le serveur.",
+          message: "Certains diplômes (PDF) n'ont pas été reçus ou n'ont pas pu être associés aux formations.",
           missingFormationIds: missingFiles.map(f => f.id)
         });
       }
@@ -73,15 +92,17 @@ exports.completeCandidatProfile = async (req, res) => {
   } catch (error) {
     console.error("Error in completeCandidatProfile:", error);
 
-    // Extraire les messages d'erreur de validation Mongoose
+    // Retourner un message d'erreur détaillé au frontend
     let errorMsg = error.message;
     if (error.name === 'ValidationError') {
       errorMsg = Object.values(error.errors).map(err => err.message).join(', ');
     }
 
     res.status(400).json({
-      message: errorMsg,
-      errorType: error.name
+      message: "Une erreur est survenue sur le serveur",
+      details: errorMsg,
+      errorType: error.name,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 };
