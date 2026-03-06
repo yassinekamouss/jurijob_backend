@@ -116,6 +116,16 @@ async function updateUser(id, updateData = {}, imageFile = null) {
     throw new Error("Utilisateur introuvable");
   }
 
+  // Vérifier si l'email est déjà utilisé par un autre compte
+  if (updateData.email && updateData.email !== user.email) {
+    const existingUser = await User.findOne({ email: updateData.email });
+    if (existingUser) {
+      const err = new Error("Cet email est déjà utilisé par un autre compte.");
+      err.code = "EMAIL_CONFLICT";
+      throw err;
+    }
+  }
+
   // Si un nouveau fichier est envoyé, uploader et remplacer imagePublicId/imageUrl
   if (imageFile && imageFile.path) {
     // Tenter de supprimer l'ancienne image cloudinary (si existante)

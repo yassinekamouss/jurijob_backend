@@ -1,8 +1,8 @@
-const { createUser , deleteUserAndProfile , updateUser } = require("../services/userService");
+const { createUser, deleteUserAndProfile, updateUser } = require("../services/userService");
 
 exports.registerUser = async (req, res) => {
   try {
-    const user = await createUser(req.body,  req.file);
+    const user = await createUser(req.body, req.file);
 
     res.status(201).json({
       message: "Utilisateur créé avec succès",
@@ -20,7 +20,7 @@ exports.registerUser = async (req, res) => {
  */
 exports.deleteUser = async (req, res) => {
   try {
-    const userId  = req.userId;
+    const userId = req.userId;
 
     const result = await deleteUserAndProfile(userId);
 
@@ -34,16 +34,19 @@ exports.deleteUser = async (req, res) => {
 /*update user*/
 exports.updateUserInfo = async (req, res) => {
   try {
-    const  id = req.userId;
+    const id = req.userId;
     const updateData = req.body;
 
-    const updatedUser = await updateUser(id, updateData , req.file);
+    const updatedUser = await updateUser(id, updateData, req.file);
 
     res.status(200).json({
       message: "Utilisateur mis à jour avec succès",
       user: updatedUser
     });
   } catch (err) {
+    if (err.code === "EMAIL_CONFLICT") {
+      return res.status(409).json({ message: err.message });
+    }
     res.status(400).json({ message: err.message });
   }
 };
