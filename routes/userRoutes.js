@@ -6,6 +6,7 @@ const authenticateToken = require("../middlewares/authMiddleware");
 const upload = multer({ dest: "uploads/" }); // Dossier temporaire pour stocker les fichiers téléchargés
 
 router.post("/register", upload.single("image"), userController.registerUser);
+router.post("/check-email", userController.checkEmail);
 router.delete("/delete-user", authenticateToken, userController.deleteUser);
-router.patch("/update-user",  authenticateToken, upload.single("image"), userController.updateUserInfo);
+router.patch("/update-user", authenticateToken, upload.single("image"), userController.updateUserInfo);
 module.exports = router;

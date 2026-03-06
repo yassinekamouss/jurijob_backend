@@ -1,4 +1,4 @@
-const { createUser, deleteUserAndProfile, updateUser } = require("../services/userService");
+const { createUser, deleteUserAndProfile, updateUser, checkEmailExists } = require("../services/userService");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -10,7 +10,29 @@ exports.registerUser = async (req, res) => {
       role: user.role,
     });
   } catch (error) {
+    if (error.code === "EMAIL_CONFLICT") {
+      return res.status(409).json({ message: error.message });
+    }
     res.status(400).json({ message: error.message });
+  }
+};
+
+/**
+ * Vérifie si un email est déjà utilisé (pour validation côté signup)
+ */
+exports.checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email requis" });
+    }
+    const exists = await checkEmailExists(email);
+    if (exists) {
+      return res.status(409).json({ message: "Cet email est déjà utilisé par un autre compte." });
+    }
+    res.status(200).json({ available: true });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 

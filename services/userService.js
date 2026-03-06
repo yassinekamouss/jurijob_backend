@@ -34,7 +34,9 @@ async function createUser(data, imageFile) {
   // Vérifier si l'email existe déjà
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new Error("Email déjà utilisé");
+    const err = new Error("Cet email est déjà utilisé par un autre compte.");
+    err.code = "EMAIL_CONFLICT";
+    throw err;
   }
 
   // Hash du mot de passe
@@ -166,9 +168,19 @@ async function updateUser(id, updateData = {}, imageFile = null) {
   return sanitizeUser(user);
 }
 
+/**
+ * checkEmailExists - vérifie si un email est déjà utilisé
+ */
+async function checkEmailExists(email) {
+  if (!email) return false;
+  const user = await User.findOne({ email: email.toLowerCase().trim() });
+  return !!user;
+}
+
 module.exports = {
   createUser,
   findUserById,
   deleteUserAndProfile,
   updateUser,
+  checkEmailExists,
 };
